@@ -163,7 +163,6 @@ def main():
               '2: Cookie',            
               '3: Ice Cream',
               '4: Sunday',
-              '5: Admin Module'
               '\nWhat would you like to add to the order? (1-4, Enter for done): '
         ])
 
@@ -200,7 +199,7 @@ def main():
             print('Invalid response:  Please enter a choice from the menu (1-4) or Enter')
       print()
 
-      new_order = input("\n Start a new order? Press Y for Yes.")
+      new_order = input("\n Start a new order? Y/N: ")
       if new_order.lower() != 'y':
          print("Enjoy!")
          break
