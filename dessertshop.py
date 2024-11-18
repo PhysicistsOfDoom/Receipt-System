@@ -6,7 +6,8 @@ class DessertShop:
   def __init__(self):
      self.customer_db: Dict[str, Customer] = {}
 
-  def get_create(self, customer_name: str):
+  #Checking if a customer is already in the DB
+  def check_customer(self, customer_name: str):
      if customer_name in self.customer_db:
         return self.customer_db[customer_name]
      else:
@@ -14,6 +15,26 @@ class DessertShop:
         new_customer = Customer(customer_name)
         self.customer_db[customer_name] = new_customer
         return new_customer
+     
+  #If Admin Module lists customers, call this function
+  def list_customers(self):
+     print("\nCustomer listing:")
+     for customer in self.customer_db.values():
+        print(f"ID: {customer.customer_id}, Name: {customer.customer_name}")
+
+  #If Admin Module wants to see order history call this module:
+  def view_history(self, customer_name: str):
+     order_num = 1
+     if customer_name in self.customer_db:
+        print(f"\nOrder history for {customer_name}:")
+        for order in customer_name.order_history:
+           print(f"{order_num}: {order.order[order_num]}")
+           order_num += 1
+
+  #Checking who is the best customer by comparing total
+  def best_customer(self):
+     best_customer = max(self.customer_name.values(), key=lambda customer_name: customer_name.order.order_cost())
+     return best_customer
 
   # HERE IS THE CANDY INPUT
   def user_prompt_candy(self):
@@ -137,6 +158,10 @@ class Customer:
   def add2history(self, order:Order)-> "Customer":
     self.order_history.append(order)
     return self
+  
+  def total_order(self):
+     for order in self.order_history:
+        return sum(order.order_cost())
 
 
 
@@ -163,7 +188,16 @@ def main():
               '2: Cookie',            
               '3: Ice Cream',
               '4: Sunday',
+              '5: Admin Module'
               '\nWhat would you like to add to the order? (1-4, Enter for done): '
+        ])
+      #Prompt for when you need to access the admin module
+      admin_prompt = '\n'.join([ '\n',
+              '1: Shop Customer List',
+              '2: Customer Order History',            
+              '3: Best Customer',
+              '4: Exit Admin Module',
+              '\n~:'
         ])
 
       while not done:
@@ -172,7 +206,7 @@ def main():
           case '':
             #Ask for customer name BEFORE payment.
             customer_name = input("Please Enter your name: ")
-            customer = shop.get_create(customer_name)
+            customer = shop.check_customer(customer_name)
             customer.add2history(order)
 
             payment = shop.user_prompt_payment() # This calls the DessertShop Object for the payment Method
@@ -195,6 +229,24 @@ def main():
             item = shop.user_prompt_sundae()
             order.add(item)
             print(order)
+          case '5':
+            in_admin_module = True
+            while in_admin_module:
+               admin_choice = input(admin_prompt)
+               match admin_choice:
+                  case '1':
+                     shop.list_customers()
+                  case '2':
+                     customer_name = input("Please enter your customer name: ")
+                     shop.customer_order_history(customer_name)
+                  case '3':
+                     shop.best_customer()
+                  case '4':
+                     in_admin_module = False
+                  case _:
+                     print("Please type an option.")
+
+              
           case _:            
             print('Invalid response:  Please enter a choice from the menu (1-4) or Enter')
       print()
